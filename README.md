@@ -1,5 +1,18 @@
 # spring-boot-virtual-threads-load-test
 
+Copy from https://github.com/GaetanoPiazzolla/spring-boot-virtual-threads-test
+and https://github.com/GaetanoPiazzolla/spring-boot-virtual-threads
+
+## Change
+- code:
+  - update Spring boot version
+  - use spring.threads.virtual.enabled
+  - lombok
+  - docker multistage + layers
+- fix prometheus 
+
+---
+
 This repository contains the code to be able to test the different performances between a spring-boot application based on virtual threads https://github.com/GaetanoPiazzolla/spring-boot-virtual-threads
 and standard spring application using platform threads.
 
@@ -26,10 +39,13 @@ docker-compose run --rm k6 run /k6-scripts/<test-name> -e THREAD=virtual|standar
 ```
 
 Before each test you should run the following script to make every load test independent of the previous executions.
-
 ```sql
 delete from library.books b where b.book_id <> 1;
-delete from library.orders ;
+delete from library.orders;
+```
+
+```shell
+echo "delete from library.books b where b.book_id <> 1; delete from library.orders;" | docker exec -i db-service psql -U postgres
 ```
 
 You may also want to add some latency for the database connection:
