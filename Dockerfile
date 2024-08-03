@@ -11,7 +11,7 @@ COPY settings.gradle.kts ./
 RUN chmod 777 ./gradlew
 RUN ./gradlew clean build --no-daemon
 RUN mkdir ./app \
-    && cp ./build/libs/spring-boot-app-0.0.2-SNAPSHOT.jar  ./app/application.jar
+    && cp ./build/libs/spring-boot-virtual-threads-test-0.0.2-SNAPSHOT.jar  ./app/application.jar
 RUN java --version
 RUN java -Djarmode=tools -jar ./app/application.jar extract --layers --launcher
 RUN echo $(ls -1 ./src)

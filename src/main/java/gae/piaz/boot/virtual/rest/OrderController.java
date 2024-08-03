@@ -7,6 +7,8 @@ import gae.piaz.boot.virtual.domain.User;
 import gae.piaz.boot.virtual.repository.BookRepository;
 import gae.piaz.boot.virtual.repository.OrderRepository;
 import gae.piaz.boot.virtual.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,18 +24,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/orders")
+@RequiredArgsConstructor
+@Slf4j
 public class OrderController {
 
-    private final Logger log = LoggerFactory.getLogger(OrderController.class);
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private BookRepository bookRepository;
-
-    @Autowired
-    private OrderRepository orderRepository;
+    private final UserRepository userRepository;
+    private final BookRepository bookRepository;
+    private final OrderRepository orderRepository;
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional

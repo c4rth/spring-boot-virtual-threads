@@ -3,6 +3,8 @@ package gae.piaz.boot.virtual.rest;
 import gae.piaz.boot.virtual.domain.Book;
 import gae.piaz.boot.virtual.domain.dto.BookDTO;
 import gae.piaz.boot.virtual.repository.BookRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +22,11 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/books")
+@RequiredArgsConstructor
+@Slf4j
 public class BookController {
 
-    private final Logger log = LoggerFactory.getLogger(BookController.class);
-
-    @Autowired
-    private BookRepository bookRepository;
+    private final BookRepository bookRepository;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<BookDTO>> getAll() {

@@ -8,7 +8,6 @@ spring:
   datasource:
     username: postgres
     url: jdbc:postgresql://db-service:5432/postgres?currentSchema=library
-    platform: postgres
     password: postgres
 
   jpa:
@@ -20,22 +19,26 @@ spring:
     show-sql: 'false'
     hibernate:
       ddl-auto: none
+  sql:
+    init:
+      platform: postgres
 
 server:
   port: '8080'
-  tomcat:
-    mbeanregistry:
-      enabled: true
+  #tomcat:
+  #  mbeanregistry:
+  #    enabled: true
 
 management:
-  endpoints:
+  endpoint:
     metrics:
       enabled: true
+    health:
+      show-details: always
+  endpoints:
     web:
       exposure:
         include: '*'
-    health:
-      show-details: always
   metrics:
     tags:
       application: spring-app

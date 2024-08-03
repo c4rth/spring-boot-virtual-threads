@@ -1,11 +1,18 @@
 package gae.piaz.boot.virtual.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serial;
 import java.io.Serializable;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "orders")
 public class Order implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -26,35 +33,4 @@ public class Order implements Serializable {
     public Order() {
     }
 
-    public Integer getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Integer orderId) {
-        this.orderId = orderId;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
-    public Book getBook() {
-        return book;
-    }
-
-    public void setBook(Book book) {
-        this.book = book;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 }
