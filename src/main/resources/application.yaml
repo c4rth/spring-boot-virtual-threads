@@ -1,6 +1,8 @@
 thread-mode: ${THREAD_MODE}
 
 spring:
+  application:
+    name: spring-app-${THREAD_MODE}
   threads:
     virtual:
       enabled: ${VIRTUAL_THREAD}
@@ -48,9 +50,9 @@ management:
       application: spring-app
   otlp:
     tracing:
-      endpoint: http://tempo:4318/v1/traces
-  zipkin:
-    tracing:
-      endpoint: http://tempo:9411
+      endpoint: http://otel:4318/v1/traces
+  #zipkin:
+  #  tracing:
+  #    endpoint: http://tempo:9411
 
 logging.pattern.level: "trace_id=%mdc{traceId} span_id=%mdc{spanId} %p"

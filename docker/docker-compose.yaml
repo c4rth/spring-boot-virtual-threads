@@ -41,11 +41,12 @@ services:
     environment:
       - INFLUXDB_DB=k6
 
-  tempo:
-    container_name: tempo
-    image: grafana/tempo:latest
-    command: [ "--target=all", "--multitenancy.enabled=false", "-config.file=/etc/tempo.yaml" ]
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel
+    command: [ "--config=/etc/otel-collector.yaml" ]
     ports:
+      - "1888:1888"  # pprof extension
       - "14268:14268"  # jaeger ingest
       - "3200:3200"   # tempo
       - "9095:9095" # tempo grpc
@@ -53,9 +54,22 @@ services:
       - "4318:4318"  # otlp http
       - "9411:9411"   # zipkin
     volumes:
+      - ./otel/otel-collector.yaml:/etc/otel-collector.yaml
+
+  tempo:
+    container_name: tempo
+    image: grafana/tempo:latest
+    command: [ "--target=all", "--multitenancy.enabled=false", "-config.file=/etc/tempo.yaml" ]
+    ports:
+      - "14268"  # jaeger ingest
+      - "3200"   # tempo
+      - "9095" # tempo grpc
+      - "4317"  # otlp grpc
+      - "4318"  # otlp http
+      - "9411"   # zipkin
+    volumes:
       - ./tempo/tempo.yaml:/etc/tempo.yaml
       - ./tempo-data:/var/tempo
-
 
   grafana:
     container_name: grafana
