@@ -10,6 +10,7 @@ and https://github.com/GaetanoPiazzolla/spring-boot-virtual-threads
   - lombok
   - docker multistage + layers
 - fix prometheus 
+- reorg repo
 
 ---
 
@@ -23,7 +24,7 @@ https://medium.com/dev-genius/spring-boot-3-with-java-19-virtual-threads-ca6a03b
 All this code is published under the GNU General Public License v3.0 and it's free for you to use and customize as you wish.
 
 ### Step 1:
-Run the containers by executing the following command inside the "deployment" folder:
+Run the containers by executing the following command inside the "docker" folder:
 
 ```shell
 docker compose rm -f
@@ -32,7 +33,7 @@ docker compose up --build --force-recreate --remove-orphans
 
 ### Step 2:
 
-Run k6 tests in temporary container by executing the following command inside the "k6-testing" folder:
+Run k6 tests in temporary container by executing the following command inside the "docker/k6-testing" folder:
 
 ```shell
 docker-compose run --rm k6 run /k6-scripts/<test-name> -e THREAD=virtual|standard -e USERS=20|40|393939... 

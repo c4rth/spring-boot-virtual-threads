@@ -1,6 +1,8 @@
 import http from 'k6/http';
 import {check, group} from 'k6';
 import {Rate, Trend} from 'k6/metrics';
+import exec from 'k6/execution';
+import tracing from "k6/experimental/tracing";
 
 const getTrend = new Trend('Get_Books');
 const getErrorRate = new Rate('Get_Books_error');
@@ -11,7 +13,10 @@ const postErrorRate = new Rate('Add_Book_error');
 const orderTrend = new Trend('Add_Order');
 const orderErrorRate = new Rate('Add_Order_error');
 
-const uniqueId = new Date().toISOString()
+tracing.instrumentHTTP({
+    // possible values: "w3c", "jaeger"
+    propagator: "w3c",
+});
 
 export const options = {
     stages: [
@@ -22,6 +27,7 @@ export const options = {
 };
 
 export default function () {
+    const uniqueId = `${exec.scenario.startTime}`;
     group(`${__ENV.THREAD}-${uniqueId}`, function () {
             const url = `http://spring-app-${__ENV.THREAD}:8080/`
 
