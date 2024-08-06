@@ -1,4 +1,4 @@
-package gae.piaz.boot.virtual.domain.dto;
+package org.c4rth.virtual.domain.dto;
 
 import java.io.Serializable;
 

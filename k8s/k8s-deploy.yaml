@@ -1,0 +1,43 @@
+apiVersion: v1 # Kubernetes API version
+kind: Service # Kubernetes resource kind
+metadata:
+  name: spring-app-virtual-service
+spec:
+  selector:
+    app: backend
+  ports:
+    - protocol: TCP # The IP protocol for this port. Supports "TCP", "UDP", and "SCTP".
+      port: 8081 # The port that will be exposed by this service.
+      targetPort: 8080 # The port to access on the pods targeted by the service.
+  type: NodePort # type of the service.
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-app-virtual #The name of deployment
+spec:
+  replicas: 1 # Number of replicas that will be created for this deployment
+  selector: #Label selector for pods.
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      serviceAccountName: spring-cloud-kubernetes
+      containers:
+        - name: spring-app-virtual
+          image: test:latest
+          env:
+            - name: VIRTUAL_THREAD
+              value: 'true'
+            - name: THREAD_MODE
+              value: 'virtual'
+#            - name: SPRING_CLOUD_BOOTSTRAP_ENABLED
+#              value: "true"
+            - name: SPRING_CONFIG_IMPORT
+              value: "kubernetes:"
+          ports:
+            - containerPort: 8080
+          imagePullPolicy: Never #the kubelet does not try fetching the image. If the image is somehow already present locally, the kubelet attempts to start the container; otherwise, startup fails.

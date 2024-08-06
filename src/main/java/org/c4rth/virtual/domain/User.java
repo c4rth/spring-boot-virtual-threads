@@ -1,4 +1,4 @@
-package gae.piaz.boot.virtual.domain;
+package org.c4rth.virtual.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;

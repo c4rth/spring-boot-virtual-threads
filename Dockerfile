@@ -11,7 +11,7 @@ COPY settings.gradle.kts ./
 RUN chmod 777 ./gradlew
 RUN ./gradlew clean build --no-daemon
 RUN mkdir ./app \
-    && cp ./build/libs/spring-boot-virtual-threads-test-0.0.2-SNAPSHOT.jar  ./app/application.jar
+    && cp ./build/libs/application.jar  ./app/application.jar
 RUN java --version
 RUN java -Djarmode=tools -jar ./app/application.jar extract --layers --launcher
 #ADD https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.6.0/opentelemetry-javaagent.jar ./opentelemetry-agent.jar

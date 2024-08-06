@@ -1,17 +1,14 @@
-package gae.piaz.boot.virtual.rest;
+package org.c4rth.virtual.rest;
 
-import gae.piaz.boot.virtual.domain.dto.OrderDTO;
-import gae.piaz.boot.virtual.domain.Book;
-import gae.piaz.boot.virtual.domain.Order;
-import gae.piaz.boot.virtual.domain.User;
-import gae.piaz.boot.virtual.repository.BookRepository;
-import gae.piaz.boot.virtual.repository.OrderRepository;
-import gae.piaz.boot.virtual.repository.UserRepository;
+import org.c4rth.virtual.domain.dto.OrderDTO;
+import org.c4rth.virtual.domain.Book;
+import org.c4rth.virtual.domain.Order;
+import org.c4rth.virtual.domain.User;
+import org.c4rth.virtual.repository.BookRepository;
+import org.c4rth.virtual.repository.OrderRepository;
+import org.c4rth.virtual.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;

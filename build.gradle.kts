@@ -17,6 +17,7 @@ configurations {
 dependencyManagement {
     imports {
         mavenBom("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom:2.6.0")
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2023.0.3")
     }
 }
 
@@ -34,9 +35,13 @@ dependencies {
     implementation("io.opentelemetry:opentelemetry-exporter-otlp")
     //implementation("io.opentelemetry:opentelemetry-exporter-zipkin")
     implementation("io.micrometer:micrometer-registry-prometheus")
-    runtimeOnly("org.postgresql:postgresql")
+    implementation("org.springframework.cloud:spring-cloud-starter")
+    implementation("org.springframework.cloud:spring-cloud-starter-bootstrap")
+    implementation("org.springframework.cloud:spring-cloud-starter-kubernetes-fabric8-all")
+    runtimeOnly("com.h2database:h2")
+    //runtimeOnly("org.postgresql:postgresql")
 }
 
-group = "gae.piaz"
-version = "0.0.2-SNAPSHOT"
+group = "org.c4rth"
+version = "0.0.1-SNAPSHOT"
 description = "spring-boot-virtual-threads-test"

@@ -1,6 +1,6 @@
-package gae.piaz.boot.virtual.repository;
+package org.c4rth.virtual.repository;
 
-import gae.piaz.boot.virtual.domain.Book;
+import org.c4rth.virtual.domain.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
