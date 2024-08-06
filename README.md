@@ -21,7 +21,7 @@ The experimental results I've found have been published in the following medium 
 
 https://medium.com/dev-genius/spring-boot-3-with-java-19-virtual-threads-ca6a03bc511d
 
-All this code is published under the GNU General Public License v3.0 and it's free for you to use and customize as you wish.
+All this code is published under the GNU General Public License v3.0, and it's free for you to use and customize as you wish.
 
 ### Step 1:
 Run the containers by executing the following command inside the "docker" folder:

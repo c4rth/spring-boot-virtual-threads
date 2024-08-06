@@ -8,10 +8,8 @@ import org.springframework.boot.logging.DeferredLogFactory;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
-import org.springframework.core.env.MapPropertySource;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class TestEnvironmentPostProcessor implements EnvironmentPostProcessor {
@@ -40,7 +38,7 @@ public class TestEnvironmentPostProcessor implements EnvironmentPostProcessor {
                 );
                 //cps.getPropertySources().forEach(x -> log.info("composite: " + x.toString() + " = " + x.getClass().getName()));
             }
-            if (ps instanceof EnumerablePropertySource mps) {
+            if (ps instanceof EnumerablePropertySource<?> mps) {
                 var str1 = Arrays.stream(mps.getPropertyNames()).map(key -> key + " = " + mps.getProperty(key))
                         .collect(Collectors.joining(",\n", "{", "}"));
                 log.info("    properties = " + str1);

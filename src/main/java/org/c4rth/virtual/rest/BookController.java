@@ -1,10 +1,10 @@
 package org.c4rth.virtual.rest;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.c4rth.virtual.domain.Book;
 import org.c4rth.virtual.domain.dto.BookDTO;
 import org.c4rth.virtual.repository.BookRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;

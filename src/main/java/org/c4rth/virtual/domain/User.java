@@ -27,7 +27,7 @@ public class User implements Serializable {
     @Column(name = "last_name")
     private String lastName;
 
-    //bi-directional many-to-one association to Order
+    // bidirectional many-to-one association to Order
     @OneToMany(mappedBy = "user")
     private List<Order> orders;
 
