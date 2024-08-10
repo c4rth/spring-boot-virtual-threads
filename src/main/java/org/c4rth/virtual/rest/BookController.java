@@ -2,6 +2,7 @@ package org.c4rth.virtual.rest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.c4rth.virtual.domain.Book;
 import org.c4rth.virtual.domain.dto.BookDTO;
 import org.c4rth.virtual.repository.BookRepository;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -29,6 +31,11 @@ public class BookController {
     public ResponseEntity<List<BookDTO>> getAll() {
         UUID uuid = UUID.randomUUID();
         log.info("getAll() {} running", uuid);
+
+        Random random = new Random();
+        if (random.nextInt(1000) > 900) {
+            throw new RuntimeException("simulated error");
+        }
 
         ResponseEntity<List<BookDTO>> list = ResponseEntity.ok(this.bookRepository.findAll().stream().
                 map((e) -> new BookDTO(e.getBookId(),e.getAuthor(),e.getIsbn(),e.getTitle(),e.getYear())).collect(Collectors.toList()));

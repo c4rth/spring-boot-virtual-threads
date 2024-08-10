@@ -61,3 +61,9 @@ docker exec db-service tc qdisc add dev eth0 root netem delay 250ms
 Datas will be available on the grafana dashboard at: 
 
 http://localhost:3000/d/k6/k6-load-testing-results?orgId=1&refresh=5s
+
+### Step: 4
+Delete all
+```
+docker compose down --volumes
+```

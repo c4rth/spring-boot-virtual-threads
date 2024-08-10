@@ -4,14 +4,6 @@ networks:
 
 services:
 
-  prometheus:
-    container_name: prometheus
-    image: "prom/prometheus"
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./prometheus/prom.yaml:/etc/prometheus/prometheus.yml
-
   db-service:
     container_name: db-service
     cap_add:
@@ -32,34 +24,67 @@ services:
           memory: 250M
         reservations:
           memory: 250M
-
-  influxdb:
-    container_name: influxdb
-    image: influxdb:1.8
-    ports:
-      - "8086:8086"
-    environment:
-      - INFLUXDB_DB=k6
+#
+#
+#
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
-    container_name: otel
-    command: [ "--config=/etc/otel-collector.yaml" ]
+    container_name: otel-collector
+    command:
+      - "--config=/etc/otel-collector.yaml"
     ports:
-      - "1888:1888"  # pprof extension
-      - "14268:14268"  # jaeger ingest
-      - "3200:3200"   # tempo
-      - "9095:9095" # tempo grpc
-      - "4317:4317"  # otlp grpc
-      - "4318:4318"  # otlp http
-      - "9411:9411"   # zipkin
+      - "1888"   # pprof extension
+      - "8888"   # Prometheus metrics exposed by the collector
+      - "8889"   # Prometheus exporter metrics
+      - "13133" # health_check extension
+      - "4317"   # OTLP gRPC receiver
+      - "4318"   # OTLP http receiver
+      - "55679" # zpages extension
+
+      #- "14268"  # jaeger ingest
+      #- "3200"   # tempo
+      #- "9095" # tempo grpc
+      #- "4317"  # otlp grpc
+      #- "4318"  # otlp http
+      #- "9411"   # zipkin
+      #- "8889"   # prometheus export
     volumes:
       - ./otel/otel-collector.yaml:/etc/otel-collector.yaml
+
+  prometheus:
+    container_name: prometheus
+    image: "prom/prometheus"
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --enable-feature=exemplar-storage
+      - --web.enable-remote-write-receiver
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prom.yaml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - otel-collector
+
+  loki:
+    container_name: loki
+    image: grafana/loki:latest
+    command:
+      - --config.file=/etc/loki/local-config.yaml
+    ports:
+      - "3100"
+    volumes:
+      - ./loki/loki.yaml:/etc/loki/local-config.yaml
+    depends_on:
+      - otel-collector
 
   tempo:
     container_name: tempo
     image: grafana/tempo:latest
-    command: [ "--target=all", "--multitenancy.enabled=false", "-config.file=/etc/tempo.yaml" ]
+    command:
+      - "--target=all"
+      - "--multitenancy.enabled=false"
+      - "-config.file=/etc/tempo/tempo.yaml"
     ports:
       - "14268"  # jaeger ingest
       - "3200"   # tempo
@@ -68,8 +93,10 @@ services:
       - "4318"  # otlp http
       - "9411"   # zipkin
     volumes:
-      - ./tempo/tempo.yaml:/etc/tempo.yaml
-      - ./tempo-data:/var/tempo
+      - ./tempo/tempo.yaml:/etc/tempo/tempo.yaml
+      - ./tempo-data:/tmp/tempo
+    depends_on:
+      - otel-collector
 
   grafana:
     container_name: grafana
@@ -85,17 +112,42 @@ services:
       - ./grafana/dashboards:/var/lib/grafana/dashboards
       - ./grafana/grafana-dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboard.yaml
       - ./grafana/grafana-datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
+    depends_on:
+      - prometheus
+      - loki
+      - tempo
+#
+#
+#
+
+  influxdb:
+    container_name: influxdb
+    image: influxdb:1.8
+    ports:
+      - "8086:8086"
+    environment:
+      - INFLUXDB_DB=k6
+#
+#
+#
 
   spring-app-virtual:
     build:
       context: ..
     depends_on:
       - db-service
-      - tempo
+      - otel-collector
     restart: always
     environment:
       - THREAD_MODE=virtual
       - VIRTUAL_THREAD=true
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+      #- OTEL_LOGS_EXPORTER="otlp"
+      - OTEL_METRIC_EXPORT_INTERVAL=500
+      - OTEL_BSP_SCHEDULE_DELAY=500
+      - OTEL_SERVICE_NAME=spring-app-virtual
+      - OTEL_RESOURCE_ATTRIBUTES=service=spring-app-virtual,env=dev
     ports:
       - "8081:8080"
     deploy:
@@ -112,10 +164,18 @@ services:
       context: ..
     depends_on:
       - db-service
+      - otel-collector
     restart: always
     environment:
       - THREAD_MODE=standard
       - VIRTUAL_THREAD=false
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+      #- OTEL_LOGS_EXPORTER="otlp"
+      - OTEL_METRIC_EXPORT_INTERVAL=500
+      - OTEL_BSP_SCHEDULE_DELAY=500
+      - OTEL_SERVICE_NAME=spring-app-standard
+      - OTEL_RESOURCE_ATTRIBUTES=service=spring-app-standard,env=dev
     ports:
       - "8082:8080"
     deploy:

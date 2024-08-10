@@ -5,17 +5,46 @@ receivers:
         endpoint: 0.0.0.0:4317
       http:
         endpoint: 0.0.0.0:4318
+  prometheus/collector:
+    config:
+      scrape_configs:
+        - job_name: 'opentelemetry-collector'
+          static_configs:
+            - targets: ['localhost:8888']
+
+processors:
+  batch:
+    send_batch_max_size: 1000
+    send_batch_size: 100
+    timeout: 10s
 
 exporters:
-  otlp:
-    endpoint: tempo:4317
+  #prometheusremotewrite:
+  #  endpoint: "http://prometheus:9090/api/v1/write"
+  prometheus:
+    #endpoint: "prometheus:9090"
+    endpoint: "0.0.0.0:8889"
+    enable_open_metrics: true
+  otlp/tempo:
+    endpoint: "http://tempo:4317"
     tls:
       insecure: true
-  logging:
-    #verbosity: detailed
+  loki:
+    endpoint: "http://loki:3100/loki/api/v1/push"
+    tls:
+      insecure: true
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
-      exporters: [logging,otlp]
+      processors: [batch]
+      exporters: [otlp/tempo]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [prometheus]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [loki]

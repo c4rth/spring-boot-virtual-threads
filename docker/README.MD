@@ -21,3 +21,8 @@ To replace latency:
 ```shell
 docker exec db-service tc qdisc replace dev eth0 root netem delay 200ms
 ```
+
+K6 script
+```
+docker compose run --rm k6 run /k6-scripts/load-test.js -e THREAD=virtual -e USERS=20 
+```
