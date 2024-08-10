@@ -1,5 +1,7 @@
 package org.c4rth.virtual.rest;
 
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
@@ -26,34 +28,63 @@ import java.util.stream.Collectors;
 public class BookController {
 
     private final BookRepository bookRepository;
+    private final ObservationRegistry observationRegistry;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<BookDTO>> getAll() {
+
+        Observation observation = Observation.start("getAll", observationRegistry);
+
         UUID uuid = UUID.randomUUID();
         log.info("getAll() {} running", uuid);
 
         Random random = new Random();
         if (random.nextInt(1000) > 900) {
-            throw new RuntimeException("simulated error");
+            log.error("getAll() failed");
+            throw new RuntimeException("simulated error getAll");
         }
 
         ResponseEntity<List<BookDTO>> list = ResponseEntity.ok(this.bookRepository.findAll().stream().
                 map((e) -> new BookDTO(e.getBookId(),e.getAuthor(),e.getIsbn(),e.getTitle(),e.getYear())).collect(Collectors.toList()));
 
         log.info("getAll() {} executed", uuid);
+
+        observation.stop();
+
         return list;
     }
 
     @GetMapping(value = "/simple", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Book>> getAllSimple() {
+
+        Observation observation = Observation.start("getAllSimple", observationRegistry);
+
+        Random random = new Random();
+        if (random.nextInt(1000) > 900) {
+            log.error("getAllSimple() failed");
+            throw new RuntimeException("simulated error getAllSimple");
+        }
+
+        observation.stop();
+
         return ResponseEntity.ok(this.bookRepository.findAll());
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
     public ResponseEntity<BookDTO> saveBook(@RequestBody BookDTO dto) {
+
+        Observation observation = Observation.start("saveBook", observationRegistry);
+
         UUID uuid = UUID.randomUUID();
         log.info("saveBook() {} running", uuid);
+
+
+        Random random = new Random();
+        if (random.nextInt(1000) > 900) {
+            log.error("saveBook() failed");
+            throw new RuntimeException("simulated error saveBook");
+        }
 
         Book e = new Book();
         e.setBookId(dto.bookId());
@@ -66,12 +97,18 @@ public class BookController {
         ResponseEntity<BookDTO> resp = ResponseEntity.ok(new BookDTO(e.getBookId(),e.getAuthor(),e.getIsbn(),e.getTitle(),e.getYear()));
 
         log.info("saveBook() {} ", uuid);
+
+        observation.stop();
+
         return resp;
     }
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
     public ResponseEntity<BookDTO> update(@RequestBody BookDTO dto) {
+
+        Observation observation = Observation.start("update", observationRegistry);
+
         UUID uuid = UUID.randomUUID();
         log.info("updateBook() {} running", uuid);
 
@@ -82,6 +119,9 @@ public class BookController {
         BookDTO bookDto = new BookDTO(e.getBookId(),e.getAuthor(),e.getIsbn(),e.getTitle(),e.getYear());
 
         log.info("updateBook() {} executed", uuid);
+
+        observation.stop();
+
         return ResponseEntity.ok(bookDto);
     }
 

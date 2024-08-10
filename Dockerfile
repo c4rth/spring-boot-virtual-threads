@@ -25,5 +25,5 @@ COPY --from=builder /src/application/snapshot-dependencies/ ./
 COPY --from=builder /src/application/spring-boot-loader/ ./
 COPY --from=builder /src/application/application/ ./
 COPY --from=builder /src/opentelemetry-javaagent-2.6.0.jar ./
-ENTRYPOINT ["java", "-javaagent:opentelemetry-javaagent-2.6.0.jar", "-Duser.timezone=GMT+1", "org.springframework.boot.loader.launch.JarLauncher"]
-#ENTRYPOINT ["java", "-Duser.timezone=GMT+1", "org.springframework.boot.loader.launch.JarLauncher"]
+#ENTRYPOINT ["java", "-javaagent:opentelemetry-javaagent-2.6.0.jar", "-Duser.timezone=GMT+1", "org.springframework.boot.loader.launch.JarLauncher"]
+ENTRYPOINT ["java", "-Duser.timezone=GMT+1", "org.springframework.boot.loader.launch.JarLauncher"]
